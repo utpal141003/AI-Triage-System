@@ -1,0 +1,772 @@
+{
+  "name": "Triage System - V1",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "triage",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "0454142a-cd7a-496a-a9f0-b672ffa7479c",
+      "name": "Webhook",
+      "webhookId": "YOUR_WEBHOOK_ID"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6aaebd29-630b-4a5d-b6c8-4d09cc7063c3",
+              "name": "triage_status",
+              "value": "PENDING",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "4968afc5-bd5b-4003-a676-5221e94fc2df",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "7fce0a8c-a8d2-47fb-835b-2e73c6a9e749",
+              "leftValue": "={{ $json.difficulty_breathing }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "66dfb2e3-7f9f-4786-b02d-b0b558cdae83",
+              "leftValue": "={{ $json.heavy_bleeding }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "8138c4c7-e959-46cb-a2d4-2af875333e41",
+              "leftValue": "={{ $json.conscious }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        448,
+        0
+      ],
+      "id": "3da2dca6-23cf-4e30-9e23-600f710042ff",
+      "name": "Critical condition ?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e26ef61d-7143-43fc-8506-8e210ad5b90f",
+              "leftValue": "={{ $('Edit Fields').item.json.severity }}",
+              "rightValue": "Severe",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        672,
+        112
+      ],
+      "id": "962535e1-5371-4957-82e7-2cd8e82577eb",
+      "name": "Severe or Normal?"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "36d0509b-122c-4303-98c3-1472fae8a396",
+              "name": "triage_status",
+              "value": "URGENT",
+              "type": "string"
+            },
+            {
+              "id": "69ab7323-c728-4824-86de-2bc0359e7e05",
+              "name": "priority",
+              "value": "HIGH",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        960,
+        64
+      ],
+      "id": "66b721ca-b916-4948-87e9-d18052004239",
+      "name": "Severe"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "dd4225a5-342a-49a2-8334-f877d43970f9",
+              "name": "triage_status",
+              "value": "NON-EMERGENCY",
+              "type": "string"
+            },
+            {
+              "id": "bb943e3b-f897-4e5c-8c87-81b31054b182",
+              "name": "priority",
+              "value": "NORMAL",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        960,
+        272
+      ],
+      "id": "e67ae4e3-7de0-48a1-b547-d9abdcb8a67a",
+      "name": "Normal"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ee2b2fa6-4c84-46fc-a8ec-a41b12c1c494",
+              "name": "triage_status",
+              "value": "NON-EMERGENCY",
+              "type": "string"
+            },
+            {
+              "id": "4e0c258f-afda-4405-a743-193dbf4c4e07",
+              "name": "priority",
+              "value": "NORMAL",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        672,
+        -160
+      ],
+      "id": "5ecdb5f4-a841-4e7b-acda-7265418c5060",
+      "name": "Critical"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e0f124a0-7b40-4bf2-8662-872032788c65",
+              "name": "message",
+              "value": "🚨 EMERGENCY: Critical condition detected. Immediate medical attention is required.",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        944,
+        -160
+      ],
+      "id": "7750f536-28c9-4382-a9c9-07930ee74e27",
+      "name": "Critical Message"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1a941425-05ec-46e4-9efb-5cebb8801b9e",
+              "name": "message",
+              "value": "⚠️ HIGH PRIORITY: Severe condition detected. Please seek medical attention as soon as possible.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1184,
+        64
+      ],
+      "id": "8dea412d-fb42-4330-834c-c157c194620b",
+      "name": "Severe Message"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9b113e31-b19b-460d-804a-7f38965787e2",
+              "name": "message",
+              "value": "✅ NORMAL: No immediate emergency detected. Continue monitoring the condition and consult a healthcare professional if symptoms worsen.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1184,
+        272
+      ],
+      "id": "e47367f4-17e5-4362-8982-0b5c463fd437",
+      "name": "Normal Message"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Triage System Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $('Edit Fields').item.json.name }}",
+            "Age": "={{ $('Edit Fields').item.json.age }}",
+            "Symtoms": "={{ $('Edit Fields').item.json.symptom }}",
+            "Severity": "={{ $('Edit Fields').item.json.severity }}",
+            "Triage Status": "={{ $('Edit Fields').item.json.triage_status }}",
+            "Priority": "={{ $json.priority }}",
+            "Message": "={{ $json.message }}",
+            "Patient_id": "={{ $json.patient_id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Patient_id",
+              "displayName": "Patient_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Age",
+              "displayName": "Age",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Symtoms",
+              "displayName": "Symtoms",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Severity",
+              "displayName": "Severity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Triage Status",
+              "displayName": "Triage Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Priority",
+              "displayName": "Priority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Message",
+              "displayName": "Message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1200,
+        -160
+      ],
+      "id": "9fda01cf-1296-49b4-b23f-df285633e58a",
+      "name": "Save Critical Patient",
+      "credentials": {}
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Triage System Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $('Severe').item.json.name }}",
+            "Age": "={{ $('Severe').item.json.age }}",
+            "Symtoms": "={{ $('Severe').item.json.symptom }}",
+            "Severity": "={{ $('Severe').item.json.severity }}",
+            "Triage Status": "={{ $('Severe').item.json.triage_status }}",
+            "Priority": "={{ $('Severe').item.json.priority }}",
+            "Message": "={{ $json.message }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Age",
+              "displayName": "Age",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Symtoms",
+              "displayName": "Symtoms",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Severity",
+              "displayName": "Severity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Triage Status",
+              "displayName": "Triage Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Priority",
+              "displayName": "Priority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Message",
+              "displayName": "Message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1408,
+        64
+      ],
+      "id": "1078f385-7b87-40da-a3d0-1971594d80fc",
+      "name": "Save Severe Patient",
+      "credentials": {}
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Triage System Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Triage Status": "={{ $('Normal').item.json.triage_status }}",
+            "Priority": "={{ $('Normal').item.json.priority }}",
+            "Message": "={{ $json.message }}",
+            "Severity": "={{ $('Severe or Normal?').item.json.severity }}",
+            "Symtoms": "={{ $('Severe or Normal?').item.json.symptom }}",
+            "Age": "={{ $('Severe or Normal?').item.json.age }}",
+            "Name": "={{ $('Severe or Normal?').item.json.name }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Age",
+              "displayName": "Age",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Symtoms",
+              "displayName": "Symtoms",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Severity",
+              "displayName": "Severity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Triage Status",
+              "displayName": "Triage Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Priority",
+              "displayName": "Priority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Message",
+              "displayName": "Message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1408,
+        272
+      ],
+      "id": "d856056f-9b0d-4665-bf07-78aad57f623b",
+      "name": "Save Normal Patient",
+      "credentials": {}
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Critical condition ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Critical condition ?": {
+      "main": [
+        [
+          {
+            "node": "Critical",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Severe or Normal?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Severe or Normal?": {
+      "main": [
+        [
+          {
+            "node": "Severe",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Normal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Critical": {
+      "main": [
+        [
+          {
+            "node": "Critical Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Severe": {
+      "main": [
+        [
+          {
+            "node": "Severe Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normal": {
+      "main": [
+        [
+          {
+            "node": "Normal Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Critical Message": {
+      "main": [
+        [
+          {
+            "node": "Save Critical Patient",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Severe Message": {
+      "main": [
+        [
+          {
+            "node": "Save Severe Patient",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normal Message": {
+      "main": [
+        [
+          {
+            "node": "Save Normal Patient",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "YOUR_N8N_VERSION_ID",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "YOUR_N8N_INSTANCE_ID"
+  },
+  "nodeGroups": [],
+  "id": "D3LvqJJPiMqxu5mo",
+  "tags": []
+}
